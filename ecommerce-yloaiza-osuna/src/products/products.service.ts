@@ -3,9 +3,9 @@ import { ProductsRepository } from './products.repository';
 
 @Injectable()
 export class ProductsService {
-  constructor(private productsRepository: ProductsRepository) {}
+  constructor(private readonly productsRepository: ProductsRepository) {}
 
   getProducts() {
-    return this.productsRepository.getProduct();
+    return this.productsRepository.getProducts();
   }
 }
