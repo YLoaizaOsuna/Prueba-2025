@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common';
 
-type User = {
+export type User = {
   id: string;
   email: string;
   name: string;
@@ -116,8 +117,42 @@ const users: User[] = [
 
 @Injectable()
 export class UsersRepository {
-  async getUsers() {
-    // eslint-disable-next-line @typescript-eslint/await-thenable
-    return await users;
+  getUsers(page: number, limit: number): Omit<User, 'password'>[] {
+    const start = (page - 1) * limit;
+    const end = start + limit;
+
+    const userList = users.slice(start, end);
+
+    return userList.map(({ password, ...userNoPassword }) => userNoPassword);
+  }
+
+  getUserById(id: string) {
+    const foundUser = users.find((user) => user.id === id);
+    if (!foundUser) return `No se encontró el usuario con id: ${id}`;
+    const { password, ...userNoPassword } = foundUser;
+    return userNoPassword;
+  }
+
+  addUser(user: User) {
+    users.push({ ...user, id: user.email });
+    return user.email;
+  }
+
+  updateUser(id: string, userNewData: any): string {
+    const foundUser = users.find((user) => user.id === id);
+    if (!foundUser) return `No se encontró el usuario con el id: ${id}`;
+    Object.assign(foundUser, userNewData);
+    return foundUser.id;
+  }
+
+  deleteUser(id: string): string {
+    const foundIndex = users.findIndex((user) => user.id === id);
+    if (foundIndex === -1) return `No se encontró el usuario con id: ${id}`;
+    users.splice(foundIndex, 1);
+    return id;
+  }
+
+  getUserByEmail(email: string) {
+    return users.find((user) => user.email === email);
   }
 }

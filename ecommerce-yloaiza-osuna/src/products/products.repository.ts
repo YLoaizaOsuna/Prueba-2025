@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-type Product = {
+export type Product = {
   id: number;
   name: string;
   description: string;
@@ -114,8 +114,46 @@ const products: Product[] = [
 
 @Injectable()
 export class ProductsRepository {
-  async getProducts() {
-    // eslint-disable-next-line @typescript-eslint/await-thenable
-    return await products;
+  //Helper para generar un Id incremental
+  private nextId(): number {
+    return products.length ? Math.max(...products.map((p) => p.id)) + 1 : 1;
+  }
+
+  getProducts(page: number, limit: number): Product[] {
+    const start = (page - 1) * limit;
+    const end = start + limit;
+
+    const productList = products.slice(start, end);
+
+    return productList;
+  }
+
+  getProductById(id: number): Product | string {
+    const found = products.find((product) => product.id === id);
+    if (!found) return `No se encontró el producto con id: ${id}`;
+    return found;
+  }
+
+  addProduct(productData: Omit<Product, 'id'>): number {
+    const newProduct: Product = { id: this.nextId(), ...productData };
+    products.push(newProduct);
+    return newProduct.id;
+  }
+
+  updateproduct(
+    id: number,
+    productNewData: Partial<Omit<Product, 'id'>>,
+  ): number | string {
+    const found = products.find((product) => product.id === id);
+    if (!found) return `No se encontró el producto con el id: ${id}`;
+    Object.assign(found, productNewData);
+    return found.id;
+  }
+
+  deleteProduct(id: number): number | string {
+    const idx = products.findIndex((product) => product.id === id);
+    if (idx === -1) return `No se encontró el producto con id: ${id}`;
+    products.splice(idx, 1);
+    return id;
   }
 }
