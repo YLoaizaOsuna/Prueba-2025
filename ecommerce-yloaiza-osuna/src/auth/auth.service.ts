@@ -8,11 +8,11 @@ export class AuthService {
     return 'Autenticación';
   }
 
-  signIn(email: string, password: string) {
+  async signIn(email: string, password: string) {
     if (!email || !password) {
       return `Email y password requeridos`;
     }
-    const user = this.usersRepository.getUserByEmail(email);
+    const user = await this.usersRepository.getUserByEmail(email);
     if (!user || user.password !== password) {
       return `Email o password incorrectos`;
     }
