@@ -7,8 +7,8 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Orders } from './orders.entity';
-import { Products } from './products.entity';
+import { Orders } from '../../orders/entities/orders.entity';
+import { Products } from 'src/products/entities/products.entity';
 
 @Entity({ name: 'ORDERDETAILS' })
 export class OrderDetails {
@@ -29,4 +29,5 @@ export class OrderDetails {
     inverseJoinColumn: { name: 'orderdetail_id', referencedColumnName: 'id' },
   })
   products: Products[];
+  product: any;
 }

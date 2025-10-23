@@ -1,15 +1,15 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { OrdersService } from './orders.service';
+import { CreateOrderDto } from './dto/create-order.dto';
 
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly orderService: OrdersService) {}
 
   @Post()
-  addOrder(@Body() order: any) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  addOrder(@Body() order: CreateOrderDto) {
     const { userId, products } = order;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    if (!products) return 'Productos son requeridos';
     return this.orderService.addOrder(userId, products);
   }
 

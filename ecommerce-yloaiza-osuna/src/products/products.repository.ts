@@ -1,7 +1,7 @@
-import { Categories } from './../entities/categories.entity';
+import { Categories } from '../categories/entities/categories.entity';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Products } from 'src/entities/products.entity';
+import { Products } from 'src/products/entities/products.entity';
 import { Repository } from 'typeorm';
 import data from '../utils/data.json';
 

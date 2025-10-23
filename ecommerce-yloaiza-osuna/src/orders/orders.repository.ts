@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { OrderDetails } from 'src/entities/orderdetails.entity';
-import { Orders } from 'src/entities/orders.entity';
-import { Products } from 'src/entities/products.entity';
-import { Users } from 'src/entities/users.entity';
+import { OrderDetails } from 'src/order_details/entities/orderdetails.entity';
+import { Orders } from 'src/orders/entities/orders.entity';
+import { Products } from 'src/products/entities/products.entity';
+import { Users } from 'src/users/entities/users.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -19,10 +19,10 @@ export class OrdersRepository {
     private productsRepository: Repository<Products>,
   ) {}
 
-  async addOrder(userId: string, products: any) {
+  async addOrder(userId: string, products: Partial<Products[]>) {
     const user = await this.usersRepository.findOneBy({ id: userId });
     if (!user) {
-      return `Usuario con id ${userId} no encontrado`;
+      throw new NotFoundException(`Usuario con id ${userId} no encontrado`);
     }
 
     const order = new Orders();
@@ -32,20 +32,21 @@ export class OrdersRepository {
     const newOrder = await this.ordersRepository.save(order);
 
     const productsArray = await Promise.all(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       products.map(async (element) => {
+        if (!element) {
+          throw new NotFoundException(`Usuario con id ${userId} no encontrado`);
+        }
         const product = await this.productsRepository.findOneBy({
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
           id: element.id,
         });
 
         if (!product) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-          return `Producto con id ${element.id} no encontrado`;
+          throw new NotFoundException(
+            `Producto con id ${element.id} no encontrado`,
+          );
         }
 
         await this.productsRepository.update(
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
           { id: element.id },
           { stock: product.stock - 1 },
         );
@@ -53,16 +54,14 @@ export class OrdersRepository {
       }),
     );
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    //Calcular el total de los productos (se garantiza que todos los artículos son Productos)
     const total = productsArray.reduce(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access
       (sum, product) => sum + Number(product.price),
       0,
     );
 
     const orderDetail = new OrderDetails();
     orderDetail.price = Number(Number(total).toFixed(2));
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     orderDetail.products = productsArray;
     orderDetail.order = newOrder;
     await this.orderDetailRepository.save(orderDetail);
@@ -86,7 +85,7 @@ export class OrdersRepository {
     });
 
     if (!order) {
-      return `orden con id ${id} no encontrado`;
+      throw new NotFoundException(`orden con id ${id} no encontrado`);
     }
     return order;
   }

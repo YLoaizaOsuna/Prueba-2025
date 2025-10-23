@@ -1,6 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Users } from 'src/entities/users.entity';
+import { Users } from 'src/users/entities/users.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -20,14 +20,16 @@ export class UsersRepository {
     return users.map(({ password, ...userNoPassword }) => userNoPassword);
   }
 
-  async getUserById(id: string) {
+  async getUserById(id: string): Promise<Omit<Users, 'password'>> {
     const user = await this.usersRepository.findOne({
       where: { id },
       relations: {
         orders: true,
       },
     });
-    if (!user) return `No s encontró el usuario con id ${id}`;
+    if (!user) {
+      throw new NotFoundException(`No se encontró el usuario con id ${id}`);
+    }
     const { password, ...userNoPassword } = user;
     void password;
     return userNoPassword;
@@ -43,7 +45,9 @@ export class UsersRepository {
   async updateUser(id: string, user: Users) {
     await this.usersRepository.update(id, user);
     const updateUser = await this.usersRepository.findOneBy({ id });
-    if (!updateUser) throw new Error(`No existe usuario con id ${id}`);
+    if (!updateUser) {
+      throw new NotFoundException(`No existe usuario con id ${id}`);
+    }
     const { password, ...userNoPassword } = updateUser;
     void password;
     return userNoPassword;
@@ -51,7 +55,9 @@ export class UsersRepository {
 
   async deleteUser(id: string) {
     const user = await this.usersRepository.findOneBy({ id });
-    if (!user) throw new Error(`No existe usuario con id ${id}`);
+    if (!user) {
+      throw new NotFoundException(`No existe usuario con id ${id}`);
+    }
     void this.usersRepository.remove(user);
     const { password, ...userNoPassword } = user;
     void password;

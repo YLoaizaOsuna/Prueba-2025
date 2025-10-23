@@ -5,7 +5,7 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Orders } from './orders.entity';
+import { Orders } from 'src/orders/entities/orders.entity';
 
 @Entity({ name: 'USERS' })
 export class Users {
@@ -18,19 +18,19 @@ export class Users {
   @Column({ type: 'varchar', length: 50, unique: true, nullable: false })
   email: string;
 
-  @Column({ type: 'varchar', length: 20, nullable: false })
+  @Column({ type: 'varchar', length: 15, nullable: false })
   password: string;
 
   @Column({ type: 'int' })
   phone: number;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'varchar', length: 20 })
   country: string;
 
   @Column({ type: 'text' })
   address: string;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'varchar', length: 20 })
   city: string;
 
   @OneToMany(() => Orders, (order) => order.user)

@@ -2,12 +2,12 @@ import {
   Column,
   Entity,
   JoinColumn,
-  ManyToMany,
+  OneToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Categories } from './categories.entity';
-import { OrderDetails } from './orderdetails.entity';
+import { Categories } from 'src/categories/entities/categories.entity';
+import { OrderDetails } from 'src/order_details/entities/orderdetails.entity';
 
 @Entity({ name: 'PRODUCTS' })
 export class Products {
@@ -32,10 +32,12 @@ export class Products {
   })
   imgUrl: string;
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   @ManyToOne(() => Categories, (category) => category.products)
   @JoinColumn({ name: 'category_id' })
   category: Categories;
 
-  @ManyToMany(() => OrderDetails, (orderDetails) => orderDetails.products)
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  @OneToMany(() => OrderDetails, (orderDetails) => orderDetails.product)
   orderDetails: OrderDetails[];
 }

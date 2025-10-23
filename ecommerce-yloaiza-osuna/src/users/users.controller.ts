@@ -7,18 +7,21 @@ import {
   Get,
   HttpCode,
   Param,
+  ParseUUIDPipe,
   Post,
   Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user-dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @HttpCode(200)
-  @Get()
+  @Get(':id')
   @UseGuards(AuthGuard)
   getUsers(@Query('page') page?: string, @Query('limit') limit?: string) {
     const pageNum = Number(page);
@@ -32,20 +35,20 @@ export class UsersController {
   @HttpCode(200)
   @Get(':id')
   @UseGuards(AuthGuard)
-  getUser(@Param('id') id: string) {
+  getUser(@Param('id', ParseUUIDPipe) id: string) {
     return this.usersService.getUser(id);
   }
 
   @HttpCode(201)
   @Post()
-  addUser(@Body() user: any) {
+  addUser(@Body() user: CreateUserDto) {
     return this.usersService.addUser(user);
   }
 
   @HttpCode(200)
   @Put(':id')
   @UseGuards(AuthGuard)
-  updateUser(@Param('id') id: string, @Body() user: any) {
+  updateUser(@Param('id') id: string, @Body() user: UpdateUserDto) {
     return this.usersService.updateUser(id, user);
   }
 

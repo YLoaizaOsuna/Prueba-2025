@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
+import { Users } from './entities/users.entity';
 
 @Injectable()
 export class UsersService {
@@ -13,8 +14,7 @@ export class UsersService {
     return this.usersRepository.getUserById(id);
   }
 
-  addUser(user: any) {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  addUser(user: Users) {
     return this.usersRepository.addUser(user);
   }
 
