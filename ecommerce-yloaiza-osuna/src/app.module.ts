@@ -17,6 +17,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { OrdersModule } from './orders/orders.module';
 import { CategoriesService } from './categories/categories.service';
 import { ProductsService } from './products/products.service';
+import { FileUploadModule } from './file-upload/file-upload.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ProductsService } from './products/products.service';
     AuthModule,
     CategoriesModule,
     OrdersModule,
+    FileUploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],

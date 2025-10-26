@@ -6,10 +6,14 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class UsersRepository {
   constructor(
-    @InjectRepository(Users) private usersRepository: Repository<Users>,
+    @InjectRepository(Users)
+    private readonly usersRepository: Repository<Users>,
   ) {}
 
-  async getUsers(page: number, limit: number) {
+  async getUsers(
+    page: number,
+    limit: number,
+  ): Promise<Omit<Users, 'password'>[]> {
     const skip = (page - 1) * limit;
     const users = await this.usersRepository.find({
       take: limit,
@@ -42,8 +46,8 @@ export class UsersRepository {
     return userNoPassword;
   }
 
-  async updateUser(id: string, user: Users) {
-    await this.usersRepository.update(id, user);
+  async updateUser(id: string, data: Partial<Users>) {
+    await this.usersRepository.update(id, data);
     const updateUser = await this.usersRepository.findOneBy({ id });
     if (!updateUser) {
       throw new NotFoundException(`No existe usuario con id ${id}`);

@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsersRepository } from 'src/users/users.repository';
 
 @Injectable()
@@ -10,11 +14,11 @@ export class AuthService {
 
   async signIn(email: string, password: string) {
     if (!email || !password) {
-      return `Email y password requeridos`;
+      throw new BadRequestException(`Email y password requeridos`);
     }
     const user = await this.usersRepository.getUserByEmail(email);
     if (!user || user.password !== password) {
-      return `Email o password incorrectos`;
+      throw new UnauthorizedException(`Email o password incorrectos`);
     }
     return `Usuario logueado (Token)`;
   }

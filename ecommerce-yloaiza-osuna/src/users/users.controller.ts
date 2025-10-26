@@ -15,6 +15,7 @@ import {
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user-dto';
+import { Users } from './entities/users.entity';
 
 @Controller('users')
 export class UsersController {
@@ -35,27 +36,32 @@ export class UsersController {
   @HttpCode(200)
   @Get(':id')
   @UseGuards(AuthGuard)
-  getUser(@Param('id', ParseUUIDPipe) id: string) {
+  getUser(
+    @Param('id', ParseUUIDPipe) id: string,
+  ): Promise<Omit<Users, 'password'>> {
     return this.usersService.getUser(id);
   }
 
   @HttpCode(201)
   @Post()
-  addUser(@Body() user: CreateUserDto) {
+  addUser(@Body() user: CreateUserDto): Promise<Omit<Users, 'password'>> {
     return this.usersService.addUser(user);
   }
 
   @HttpCode(200)
   @Put(':id')
   @UseGuards(AuthGuard)
-  updateUser(@Param('id') id: string, @Body() user: UpdateUserDto) {
+  updateUser(
+    @Param('id') id: string,
+    @Body() user: UpdateUserDto,
+  ): Promise<Omit<Users, 'password'>> {
     return this.usersService.updateUser(id, user);
   }
 
   @HttpCode(200)
   @Delete(':id')
   @UseGuards(AuthGuard)
-  deleteUser(@Param('id') id: string) {
+  deleteUser(@Param('id') id: string): Promise<Omit<Users, 'password'>> {
     return this.usersService.deleteUser(id);
   }
 }

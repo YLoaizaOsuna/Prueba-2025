@@ -6,23 +6,27 @@ import { Users } from './entities/users.entity';
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  getUsers(page: number, limit: number) {
+  getUsers(page: number, limit: number): Promise<Omit<Users, 'password'>[]> {
     return this.usersRepository.getUsers(page, limit);
   }
 
-  getUser(id: string) {
+  getUser(id: string): Promise<Omit<Users, 'password'>> {
     return this.usersRepository.getUserById(id);
   }
 
-  addUser(user: Users) {
+  addUser(user: Users): Promise<Omit<Users, 'password'>> {
     return this.usersRepository.addUser(user);
   }
 
-  updateUser(id: string, userNewData: any) {
+  updateUser(
+    id: string,
+    userNewData: Partial<Users>,
+  ): Promise<Omit<Users, 'password'>> {
+    if (!id) throw new Error('ID es requerido');
     return this.usersRepository.updateUser(id, userNewData);
   }
 
-  deleteUser(id: string) {
+  deleteUser(id: string): Promise<Omit<Users, 'password'>> {
     return this.usersRepository.deleteUser(id);
   }
 }
