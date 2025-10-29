@@ -11,12 +11,12 @@ export class CategoriesRepository {
     private categoriesRepository: Repository<Categories>,
   ) {}
 
-  async getCategories() {
+  async getCategories(): Promise<Categories[]> {
     return await this.categoriesRepository.find();
   }
 
-  async addCategories() {
-    const inserts = data.map((element) =>
+  async addCategories(): Promise<string> {
+    const insertPromises = data.map((element) =>
       this.categoriesRepository
         .createQueryBuilder()
         .insert()
@@ -25,7 +25,7 @@ export class CategoriesRepository {
         .orIgnore()
         .execute(),
     );
-    await Promise.all(inserts);
+    await Promise.all(insertPromises);
     return 'Categorias agregadas';
   }
 }

@@ -42,11 +42,11 @@ export class UsersController {
     return this.usersService.getUser(id);
   }
 
-  @HttpCode(201)
-  @Post()
-  addUser(@Body() user: CreateUserDto): Promise<Omit<Users, 'password'>> {
-    return this.usersService.addUser(user);
-  }
+  // @HttpCode(201)
+  // @Post()
+  // addUser(@Body() user: CreateUserDto): Promise<Omit<Users, 'password'>> {
+  //   return this.usersService.addUser(user);
+  // }
 
   @HttpCode(200)
   @Put(':id')

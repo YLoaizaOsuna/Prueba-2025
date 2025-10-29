@@ -39,14 +39,17 @@ export class UsersRepository {
     return userNoPassword;
   }
 
-  async addUser(user: Users) {
+  async addUser(user: Partial<Users>): Promise<Omit<Users, 'password'>> {
     const newUser = await this.usersRepository.save(user);
     const { password, ...userNoPassword } = newUser;
     void password;
     return userNoPassword;
   }
 
-  async updateUser(id: string, data: Partial<Users>) {
+  async updateUser(
+    id: string,
+    data: Partial<Users>,
+  ): Promise<Omit<Users, 'password'>> {
     await this.usersRepository.update(id, data);
     const updateUser = await this.usersRepository.findOneBy({ id });
     if (!updateUser) {
@@ -68,7 +71,8 @@ export class UsersRepository {
     return userNoPassword;
   }
 
-  async getUserByEmail(email: string) {
-    return await this.usersRepository.findOneBy({ email });
+  async getUserByEmail(email: string): Promise<Users | null> {
+    const foundUser = await this.usersRepository.findOneBy({ email });
+    return foundUser;
   }
 }
