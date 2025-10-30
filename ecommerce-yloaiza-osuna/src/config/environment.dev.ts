@@ -1,5 +1,10 @@
 import { config as dotenvConfig } from 'dotenv';
-dotenvConfig({ path: '.env.development' });
+import { resolve } from 'path';
+
+// __dirname = .../src/config en tiempo de desarrollo
+dotenvConfig({
+  path: resolve(__dirname, '..', '..', '.env.development'),
+});
 
 export const environment = {
   DB_NAME: process.env.DB_NAME,
@@ -14,4 +19,6 @@ export const environment = {
   CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME,
   CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY,
   CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
+
+  JWT_SECRET: process.env.JWT_SECRET,
 };

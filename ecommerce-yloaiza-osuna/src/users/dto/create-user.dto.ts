@@ -1,12 +1,15 @@
 import {
   IsEmail,
   IsInt,
+  isNotEmpty,
   IsNotEmpty,
   IsString,
   IsStrongPassword,
   MaxLength,
   MinLength,
+  Validate,
 } from 'class-validator';
+import { MatchPassword } from 'src/decorators/matchPassword.decorator';
 import { Orders } from 'src/orders/entities/orders.entity';
 
 export class CreateUserDto {
@@ -40,6 +43,10 @@ export class CreateUserDto {
     },
   )
   password: string;
+
+  @IsNotEmpty()
+  @Validate(MatchPassword, ['password'])
+  confirmPassword: string;
 
   @IsString({ message: 'El nombre debe ser texto' })
   @MinLength(3, { message: 'El nombre debe tener al menos 3 caracteres' })

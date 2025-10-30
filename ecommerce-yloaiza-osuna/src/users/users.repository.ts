@@ -34,15 +34,20 @@ export class UsersRepository {
     if (!user) {
       throw new NotFoundException(`No se encontró el usuario con id ${id}`);
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...userNoPassword } = user;
-    void password;
     return userNoPassword;
   }
 
   async addUser(user: Partial<Users>): Promise<Omit<Users, 'password'>> {
     const newUser = await this.usersRepository.save(user);
-    const { password, ...userNoPassword } = newUser;
-    void password;
+
+    const dbUser = await this.usersRepository.findOneBy({
+      id: newUser.id,
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, ...userNoPassword } = dbUser!;
     return userNoPassword;
   }
 
