@@ -7,6 +7,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
 import { environment } from 'src/config/environment.dev';
+import { Role } from '../enums/roles.enum';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -15,35 +16,42 @@ export class AuthGuard implements CanActivate {
   canActivate(
     context: ExecutionContext,
   ): boolean | Promise<boolean> | Observable<boolean> {
+    //*extraer request desde context
+
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest(); //*extraer autorizacion desde request
 
     //* 'Bearer TOKEN'
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+    const authHeader = request.headers.authorization;
+    if (!authHeader) {
+      throw new UnauthorizedException('No se ha enviado un token');
+    } //* Separar =>  authHeader = 'Bearer TOKEN'
+
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    const token = request.headers.authorization?.split(' ')[1];
-    if (!token) {
-      throw new UnauthorizedException('Se requiere Token');
+    const [type, token] = authHeader.split(' ');
+    if (type !== 'Bearer' || !token) {
+      throw new UnauthorizedException('No se ha enviado un token');
     }
-
+    //Validar Token
     try {
-      const secret = environment.JWT_SECRET;
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument
-      const payload = this.jwtService.verify(token, { secret });
-      //*payload = {id, name, exp}
-
+      const payload = this.jwtService.verify(token, {
+        secret: environment.JWT_SECRET,
+      }); //*payload = {id, name, exp}
       // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      payload.exp = new Date(payload.exp * 1000);
+      payload.roles = payload.isAdmin ? [Role.Admin] : [Role.User];
 
-      console.log('Payload: ', payload);
+      //* Adjuntar "payload" al "request":
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       request.user = payload;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      console.log('Request.user: ', request.user);
-
       return true;
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
-      throw new UnauthorizedException('Error al validar Token');
+    } catch (error: any) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      if (error.name === 'TokenExpiredError') {
+        throw new UnauthorizedException('El token ha expirado');
+      }
+      throw new UnauthorizedException('Error al validar el token');
     }
   }
 }

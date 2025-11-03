@@ -14,14 +14,19 @@ import {
 } from '@nestjs/common';
 import { UpdateUserDto } from './dto/update-user-dto';
 import { Users } from './entities/users.entity';
+import { Roles } from 'src/decorators/roles.decorator';
+import { Role } from 'src/auth/enums/roles.enum';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @HttpCode(200)
-  @Get(':id')
-  @UseGuards(AuthGuard)
+  @Get()
+  @Roles(Role.Admin)
+  //* Metadata: { roles: ['admin']}
+  @UseGuards(AuthGuard, RolesGuard)
   getUsers(@Query('page') page?: string, @Query('limit') limit?: string) {
     const pageNum = Number(page);
     const limitNum = Number(limit);
@@ -48,6 +53,7 @@ export class UsersController {
 
   @HttpCode(200)
   @Put(':id')
+  @Roles(Role.Admin)
   @UseGuards(AuthGuard)
   updateUser(
     @Param('id') id: string,

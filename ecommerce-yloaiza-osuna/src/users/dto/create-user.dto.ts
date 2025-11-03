@@ -1,7 +1,7 @@
 import {
   IsEmail,
+  IsEmpty,
   IsInt,
-  isNotEmpty,
   IsNotEmpty,
   IsString,
   IsStrongPassword,
@@ -74,4 +74,7 @@ export class CreateUserDto {
     message: 'El nombre de la ciudad debe tener máximo 20 caracteres',
   })
   city: string;
+
+  @IsEmpty()
+  isAdmin: boolean;
 }
