@@ -17,16 +17,31 @@ import { Users } from './entities/users.entity';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/auth/enums/roles.enum';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @HttpCode(200)
+  @ApiBearerAuth()
   @Get()
   @Roles(Role.Admin)
   //* Metadata: { roles: ['admin']}
   @UseGuards(AuthGuard, RolesGuard)
+  @ApiQuery({
+    name: 'page',
+    required: false,
+    type: String,
+    description: 'Número de página',
+  })
+  @ApiQuery({
+    name: 'limit',
+    required: false,
+    type: String,
+    description: 'Elementos por página',
+  })
   getUsers(@Query('page') page?: string, @Query('limit') limit?: string) {
     const pageNum = Number(page);
     const limitNum = Number(limit);
@@ -37,6 +52,7 @@ export class UsersController {
   }
 
   @HttpCode(200)
+  @ApiBearerAuth()
   @Get(':id')
   @UseGuards(AuthGuard)
   getUser(
@@ -52,6 +68,7 @@ export class UsersController {
   // }
 
   @HttpCode(200)
+  @ApiBearerAuth()
   @Put(':id')
   @Roles(Role.Admin)
   @UseGuards(AuthGuard)
@@ -63,6 +80,7 @@ export class UsersController {
   }
 
   @HttpCode(200)
+  @ApiBearerAuth()
   @Delete(':id')
   @UseGuards(AuthGuard)
   deleteUser(@Param('id') id: string): Promise<Omit<Users, 'password'>> {

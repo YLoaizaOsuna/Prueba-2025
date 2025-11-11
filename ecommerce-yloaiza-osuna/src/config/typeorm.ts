@@ -17,3 +17,6 @@ const config = {
 };
 
 export const typeOrmConfig = registerAs('typeorm', () => config);
+
+import { DataSource, DataSourceOptions } from 'typeorm';
+export const connectionSource = new DataSource(config as DataSourceOptions);
