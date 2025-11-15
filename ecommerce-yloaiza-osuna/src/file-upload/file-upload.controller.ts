@@ -52,6 +52,10 @@ export class FileUploadController {
     status: 201,
     description: 'La imagen fue cargada correctamente',
   })
+  @ApiResponse({
+    status: 404,
+    description: 'Falló la carga del archivo',
+  })
   @Post('uploadImage/:id')
   @UseInterceptors(
     FileInterceptor('file', {

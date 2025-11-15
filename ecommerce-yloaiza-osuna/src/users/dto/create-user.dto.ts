@@ -18,7 +18,6 @@ export class CreateUserDto {
   id: string;
   @ApiHideProperty()
   orders: Orders[];
-
   /**
    * Debe ser un string entre 3-80 caracteres
    * @example 'Test User01'
@@ -28,7 +27,6 @@ export class CreateUserDto {
   @MinLength(3, { message: 'El nombre debe tener al menos 3 caracteres' })
   @MaxLength(80, { message: 'El nombre no debe superar 80 caracteres' })
   name: string;
-
   /**
    * Debe ser un email valido
    * @example 'testuser01@gmail.com'
@@ -36,7 +34,6 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'El email es requerido' })
   @IsEmail({}, { message: 'El correo electrónico no es válido' })
   email: string;
-
   /**
    * Debe contener 1 minúscula, 1 mayúscula, 1 número y 1 carácter especial
    * @example 'aaBB##333'
@@ -58,7 +55,6 @@ export class CreateUserDto {
     },
   )
   password: string;
-
   /**
    * Debe ser igual al password
    * @example 'aaBB##333'
@@ -66,7 +62,6 @@ export class CreateUserDto {
   @IsNotEmpty()
   @Validate(MatchPassword, ['password'])
   confirmPassword: string;
-
   /**
    * Debe ser un string entre 3 y 80 caracteres
    * @example 'Demo street 1234'
@@ -75,7 +70,6 @@ export class CreateUserDto {
   @MinLength(3, { message: 'El nombre debe tener al menos 3 caracteres' })
   @MaxLength(80, { message: 'El nombre debe tener máximo 80 caracteres' })
   address: string;
-
   /**
    * Debe ser un número
    * @example '123456789'
@@ -83,7 +77,6 @@ export class CreateUserDto {
   @IsNotEmpty({ message: 'El teléfono es requerido' })
   @IsInt({ message: 'El telefono debe ser un numero entero' })
   phone: number;
-
   /**
    * Debe ser un string entre 5 y 20 caracteres
    * @example 'Demo Country'
@@ -96,7 +89,6 @@ export class CreateUserDto {
     message: 'El nombre del país debe tener máximo 20 caracteres',
   })
   country: string;
-
   /**
    * Debe ser un string entre 5 y 20 caracteres
    * @example 'Demo City'

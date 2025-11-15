@@ -17,30 +17,55 @@ import { Users } from './entities/users.entity';
 import { Roles } from 'src/decorators/roles.decorator';
 import { Role } from 'src/auth/enums/roles.enum';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiForbiddenResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
   @HttpCode(200)
   @ApiBearerAuth()
   @Get()
   @Roles(Role.Admin)
   //* Metadata: { roles: ['admin']}
   @UseGuards(AuthGuard, RolesGuard)
+  @ApiOperation({
+    summary: 'Listar usuarios(solo Admin)',
+    description:
+      'Devuelve una lista paginada de usuarios. Requiere token JWT de un usuario con rol admin',
+  })
   @ApiQuery({
     name: 'page',
     required: false,
     type: String,
-    description: 'Número de página',
+    description: 'Número de página (por defecto 1)',
   })
   @ApiQuery({
     name: 'limit',
     required: false,
     type: String,
-    description: 'Elementos por página',
+    description: 'Elementos por página (por defecto 5)',
+  })
+  @ApiOkResponse({
+    description: 'Lista de usuarios',
+    type: Users,
+    isArray: true,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'No autenticado / token inválido',
+  })
+  @ApiForbiddenResponse({
+    description: 'El usuario no tiene permisos de administrador',
   })
   getUsers(@Query('page') page?: string, @Query('limit') limit?: string) {
     const pageNum = Number(page);
@@ -55,23 +80,46 @@ export class UsersController {
   @ApiBearerAuth()
   @Get(':id')
   @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: 'Obtener un usuario por Id',
+  })
+  @ApiOkResponse({
+    description: 'Usuario encontrado',
+    type: Users,
+  })
+  @ApiNotFoundResponse({
+    description: 'Usuario no encontrado',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'No autenticado / token inválido',
+  })
   getUser(
     @Param('id', ParseUUIDPipe) id: string,
   ): Promise<Omit<Users, 'password'>> {
     return this.usersService.getUser(id);
   }
 
-  // @HttpCode(201)
-  // @Post()
-  // addUser(@Body() user: CreateUserDto): Promise<Omit<Users, 'password'>> {
-  //   return this.usersService.addUser(user);
-  // }
-
   @HttpCode(200)
   @ApiBearerAuth()
   @Put(':id')
   @Roles(Role.Admin)
   @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: 'Actualizar datos de un usuario',
+  })
+  @ApiOkResponse({
+    description: 'Usuario actualizado correctamente',
+    type: Users,
+  })
+  @ApiBadRequestResponse({
+    description: 'Datos inválidos',
+  })
+  @ApiUnauthorizedResponse({
+    description: 'No autenticado / token inválido',
+  })
+  @ApiForbiddenResponse({
+    description: 'El usuario no tiene permisos de administrador',
+  })
   updateUser(
     @Param('id') id: string,
     @Body() user: UpdateUserDto,
@@ -83,6 +131,16 @@ export class UsersController {
   @ApiBearerAuth()
   @Delete(':id')
   @UseGuards(AuthGuard)
+  @ApiOperation({
+    summary: 'Eliminar un usuario (requiere autenticación)',
+  })
+  @ApiOkResponse({
+    description: 'usuario eliminado correctamente',
+    type: Users,
+  })
+  @ApiUnauthorizedResponse({
+    description: 'No autenticado / token inválido',
+  })
   deleteUser(@Param('id') id: string): Promise<Omit<Users, 'password'>> {
     return this.usersService.deleteUser(id);
   }

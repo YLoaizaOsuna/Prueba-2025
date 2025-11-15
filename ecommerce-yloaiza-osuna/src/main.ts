@@ -17,10 +17,18 @@ async function bootstrap() {
     .setTitle('Ecommerce_yloaiza_osuna')
     .setDescription('Proyecto creado con NestJS')
     .setVersion('1.0.0')
-    .addBearerAuth()
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: 'Token JWT de acceso',
+      },
+      'access-token',
+    )
     .build();
   const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, documentFactory);
+  SwaggerModule.setup('API', app, documentFactory);
 
   await app.listen(environment.PORT);
   console.log(
