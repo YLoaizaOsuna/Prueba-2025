@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Users } from 'src/users/entities/users.entity';
+import { Users } from './entities/users.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -20,7 +20,6 @@ export class UsersRepository {
       skip: skip,
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     return users.map(({ password, ...userNoPassword }) => userNoPassword);
   }
 
@@ -34,7 +33,7 @@ export class UsersRepository {
     if (!user) {
       throw new NotFoundException(`No se encontró el usuario con id ${id}`);
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     const { password, ...userNoPassword } = user;
     return userNoPassword;
   }
@@ -45,8 +44,6 @@ export class UsersRepository {
     const dbUser = await this.usersRepository.findOneBy({
       id: newUser.id,
     });
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password, ...userNoPassword } = dbUser!;
     return userNoPassword;
   }

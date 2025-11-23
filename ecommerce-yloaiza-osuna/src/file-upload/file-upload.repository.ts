@@ -10,7 +10,6 @@ export class FileUploadRepository {
         { resource_type: 'auto' },
         (error, result) => {
           if (error || !result) {
-            // eslint-disable-next-line @typescript-eslint/prefer-promise-reject-errors
             reject(error || new Error('Upload result is undefined'));
           } else {
             resolve(result);

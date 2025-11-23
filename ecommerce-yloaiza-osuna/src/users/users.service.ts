@@ -14,7 +14,7 @@ export class UsersService {
     return this.usersRepository.getUserById(id);
   }
 
-  addUser(user: Users): Promise<Omit<Users, 'password'>> {
+  addUser(user: Partial<Users>): Promise<Omit<Users, 'password'>> {
     return this.usersRepository.addUser(user);
   }
 

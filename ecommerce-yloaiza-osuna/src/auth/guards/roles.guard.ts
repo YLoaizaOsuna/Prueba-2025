@@ -21,18 +21,14 @@ export class RolesGuard implements CanActivate {
       context.getClass(),
     ]);
     //* 2. Acceder a request.user = ['admin'] || ['user']
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const request = context.switchToHttp().getRequest();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     const user = request.user;
 
     //* Validacion requiredRoles vs user
     //*             ['admin', 'superadmin', etc]  vs ['user', 'admin', etc]
 
     const hasRole = () =>
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       requiredRoles.some((role) => user?.roles?.includes(role));
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     const valid = user && user.roles && hasRole();
     if (!valid) {
       throw new UnauthorizedException('No tiene permisos');
