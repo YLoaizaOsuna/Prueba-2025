@@ -34,7 +34,7 @@ import {
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
   @HttpCode(200)
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @Get()
   @Roles(Role.Admin)
   //* Metadata: { roles: ['admin']}
@@ -77,7 +77,7 @@ export class UsersController {
   }
 
   @HttpCode(200)
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @Get(':id')
   @UseGuards(AuthGuard)
   @ApiOperation({
@@ -100,7 +100,7 @@ export class UsersController {
   }
 
   @HttpCode(200)
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @Put(':id')
   @Roles(Role.Admin)
   @UseGuards(AuthGuard)
@@ -128,7 +128,7 @@ export class UsersController {
   }
 
   @HttpCode(200)
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @Delete(':id')
   @UseGuards(AuthGuard)
   @ApiOperation({
