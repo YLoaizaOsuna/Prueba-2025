@@ -8,16 +8,23 @@ import data from '../utils/data.json';
 export class CategoriesRepository {
   constructor(
     @InjectRepository(Categories)
-    private categoriesRepository: Repository<Categories>,
+    private ormCategoriesRepository: Repository<Categories>,
   ) {}
 
   async getCategories(): Promise<Categories[]> {
-    return await this.categoriesRepository.find();
+    return await this.ormCategoriesRepository.find();
+  }
+
+  //*## 3. GET /category/:id
+  async getCategoryById(id: string): Promise<Categories | null> {
+    return await this.ormCategoriesRepository.findOne({
+      where: { id },
+    });
   }
 
   async addCategories(): Promise<string> {
     const insertPromises = data.map((element) =>
-      this.categoriesRepository
+      this.ormCategoriesRepository
         .createQueryBuilder()
         .insert()
         .into(Categories)

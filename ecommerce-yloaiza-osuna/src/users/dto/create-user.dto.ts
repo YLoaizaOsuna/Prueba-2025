@@ -1,9 +1,13 @@
 import { ApiHideProperty } from '@nestjs/swagger';
 import {
+  IsDate,
+  IsDateString,
   IsEmail,
+  isEmpty,
   IsEmpty,
   IsInt,
   IsNotEmpty,
+  IsOptional,
   IsString,
   IsStrongPassword,
   MaxLength,
@@ -102,7 +106,21 @@ export class CreateUserDto {
   })
   city: string;
 
+  //* Agrega en el DTO la info (2 paso de Agregar un nuevo campo en users)
+  @IsOptional()
+  @IsDateString()
+  birthday: string;
+
   @ApiHideProperty()
   @IsEmpty()
   isAdmin: boolean;
+
+  //* Agregar en el dto como empty para que no pueda venir desde el cliente(3 paso crear superadmin)
+  @ApiHideProperty()
+  @IsEmpty()
+  isSuperadmin: boolean;
+
+  //* Agragar el dto para isBlocked (2 paso)
+  @IsEmpty()
+  isBlocked?: boolean;
 }

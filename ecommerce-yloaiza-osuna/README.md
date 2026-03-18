@@ -96,3 +96,94 @@ Nest is an MIT-licensed open source project. It can grow thanks to the sponsors 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+## Filtros (## 1. Filtros
+
+- Get de Usuario por país Query Params
+- Controller => GET /users?page=1&limit=5&country=colombia
+- Array => filter en array)
+
+1. Ajustar la ruta getUsers en users.controller para filtrar por pais
+2. Ajustar el metodo getUsers en users.service para filtrar por pais
+3. Ajustar el metodo getUsers en users.repository para filtrar por pais
+
+## Ordenamientos
+
+- Get de Usuario por país Query Params
+- Controller => GET /users?page=1&limit=5&order=asc GET /users?page=1&limit=5&sortBy=id&order=asc
+- Array => sort en array
+
+1. En el user.controller colocar el nuevo query param
+2. El service debe aceptar el nuevo argumento y pasarlo al repository
+3. En el repository se aplica el orden real en la consulta
+
+## Obtener o agregar una categoria por ID
+
+1. Se cambia en el categories.controller y se coloca el nuevo endpoint
+2. se pone el nuevo metodo en el categories.service
+3. se ajusta el metodo en el categories.repository
+
+## borrado Logico
+
+1. cambiar la users.entity
+2. ajustar el metodo GET en el repository
+3. Modificar el metodo en el repository (mas importante)
+4. ajustar en el service
+5. ajustar en el controller
+
+## Agregar un nuevo campo en users (birthday)
+
+1. Modificar la entity users, agregando el nuevo campo
+2. Modificar el DTO
+
+## Crear Un superadmin
+
+1. Habilitar el rol en el enum
+2. en users.entity se agraga el campo de 'superadmin'
+3. se crea en DTO (create) el superadmin
+4. se ajusta en users.repository
+5. ajuste del getUserById en el users.repository
+6. se ajusta el getUsers en el users.repository
+7. se incluye isSuperAdmin en el payload del authService
+8. se mira que en el RolesGuard ya no se usa user.isAdmin sino user.roles
+
+## Estandarizar respuestas
+
+1. crear un interceptor global src/interceptor/response.interceptor.ts
+2. Activarlo en el main
+
+## Manejo de errores
+
+1. crear el exception en src/filters/http-exception.filter.ts
+2. registrarlo en el main
+
+## Interceptor Filtrar el password de usuarios (GET /users)
+
+1. se crea el src/interceptors/exclude-password.interceptor.ts
+2. para no filtrar 2 veces se quita el filtor en getUsers del repository
+
+REPASO
+Middleware
+Se ejecuta antes de llegar al controlador.
+Sirve para cosas como logs, headers, validaciones simples, parseo.
+Guard
+Decide si el usuario puede entrar o no.
+Ejemplo: validar JWT o roles.
+Pipe
+Transforma o valida datos de entrada.
+Ejemplo: convertir string a number, validar UUID.
+Interceptor
+Envuelve la ejecución y puede transformar la respuesta o medir tiempos.
+Ejemplo: quitar password del response.
+
+## isBlocked (baneod de usuarios)
+
+1. crearlo en la users.entity
+2. crearlo el dto (create-user.dto)
+3. creo blocked-user.dto (src/users/dto/blocked-user.dto.ts)
+4. crear ruta PUT/users/blocked/:id en users.Controller
+5. Se crea nuevo metodo en users.Service
+6. Se crea nuevo metodo en users.Repository
+7. proteger las rutas de Admin con AuthGuard y RolesGuard
+8. ajustar el payload de AuthService
+9. Restringir acceso a todo usuario bloqueado en AuthService

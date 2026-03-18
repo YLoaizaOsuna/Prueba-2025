@@ -35,4 +35,52 @@ export class RolesGuard implements CanActivate {
     }
     return true;
   }
+
+  //* ajustar el roles guard
+  // import {
+  //   CanActivate,
+  //   ExecutionContext,
+  //   ForbiddenException,
+  //   Injectable,
+  // } from '@nestjs/common';
+  // import { Reflector } from '@nestjs/core';
+  // import { Observable } from 'rxjs';
+  // import { Role } from '../../common/roles.enum';
+
+  // @Injectable()
+  // export class RolesGuard implements CanActivate {
+  //   constructor(private readonly reflector: Reflector) {}
+
+  //   canActivate(
+  //     context: ExecutionContext,
+  //   ): boolean | Promise<boolean> | Observable<boolean> {
+  //     const routeRoles = this.reflector.getAllAndOverride<Role[]>('roles', [
+  //       context.getHandler(),
+  //       context.getClass(),
+  //     ]);
+
+  //     if (!routeRoles || routeRoles.length === 0) {
+  //       return true;
+  //     }
+
+  //     const request = context.switchToHttp().getRequest();
+  //     const user = request.user;
+
+  //     if (!user) {
+  //       throw new ForbiddenException('Usuario no autenticado');
+  //     }
+
+  //     const userRoles: Role[] = user.roles || [];
+
+  //     const isAllowed = routeRoles.some((role) => userRoles.includes(role));
+
+  //     if (!isAllowed) {
+  //       throw new ForbiddenException(
+  //         'No tienes permisos para acceder a este recurso',
+  //       );
+  //     }
+
+  //     return true;
+  //   }
+  // }
 }

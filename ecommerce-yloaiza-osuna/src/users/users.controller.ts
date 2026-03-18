@@ -28,7 +28,9 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { BlockedUserDto } from './dto/blocked-user.dto';
 
+//Get/users (con guard)
 @ApiTags('Users')
 @Controller('users')
 export class UsersController {
@@ -67,15 +69,49 @@ export class UsersController {
   @ApiForbiddenResponse({
     description: 'El usuario no tiene permisos de administrador',
   })
-  getUsers(@Query('page') page?: string, @Query('limit') limit?: string) {
+  async getUsers(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ): Promise<Omit<Users, 'password'>[]> {
     const pageNum = Number(page);
     const limitNum = Number(limit);
 
     const validPage = !isNaN(pageNum) && pageNum > 0 ? pageNum : 1;
     const validLimit = !isNaN(limitNum) && limitNum > 0 ? limitNum : 5;
+
     return this.usersService.getUsers(validPage, validLimit);
   }
 
+  //* Filtrar por pais (1 paso)
+  // async getUsers(
+  //   @Query('page') page?: string,
+  //   @Query('limit') limit?: string,
+  //   @Query('country') country?: string,
+  // ) {
+  //   const pageNum = Number(page);
+  //   const limitNum = Number(limit);
+
+  //   const validPage = !isNaN(pageNum) && pageNum > 0 ? pageNum : 1;
+  //   const validLimit = !isNaN(limitNum) && limitNum > 0 ? limitNum : 5;
+  //   return this.usersService.getUsers(validPage, validLimit, country || '');
+  // }
+  //* Ordenar asc por ID (1 paso)
+  // async getUsers(
+  //   @Query('page') page?: string,
+  //   @Query('limit') limit?: string,
+  //   @Query('order') order?: string,
+  // ): Promise<Omit<Users, 'password'>[]> {
+  //   const pageNum = Number(page);
+  //   const limitNum = Number(limit);
+
+  //   const validPage = !isNaN(pageNum) && pageNum > 0 ? pageNum : 1;
+  //   const validLimit = !isNaN(limitNum) && limitNum > 0 ? limitNum : 5;
+  //   const validOrder = order?.toLowerCase() === 'desc' ? 'DESC' : 'ASC';
+
+  //   return await this.usersService.getUsers(validPage, validLimit, validOrder);
+  // }
+
+  //Get/users/:id (con guard)
   @HttpCode(200)
   @ApiBearerAuth('access-token')
   @Get(':id')
@@ -95,10 +131,11 @@ export class UsersController {
   })
   getUser(
     @Param('id', ParseUUIDPipe) id: string,
-  ): Promise<Omit<Users, 'password'>> {
-    return this.usersService.getUser(id);
+  ): Promise<Omit<Users, 'password' | 'isAdmin' | 'isSuperAdmin'>> {
+    return this.usersService.getUserById(id);
   }
 
+  //Put/users/:id (con guard)
   @HttpCode(200)
   @ApiBearerAuth('access-token')
   @Put(':id')
@@ -126,7 +163,18 @@ export class UsersController {
   ): Promise<Omit<Users, 'password'>> {
     return this.usersService.updateUser(id, user);
   }
+  //* crear ruta PUT/users/blocked/:id (4 paso y paso 7 proteger rutas de Admin con los Guards)
+  @Put('blocked/:id')
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  blockUser(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: BlockedUserDto,
+  ) {
+    return this.usersService.blockUser(id, dto.isBlocked);
+  }
 
+  //Delete/users/:id (con guard)
   @HttpCode(200)
   @ApiBearerAuth('access-token')
   @Delete(':id')
@@ -144,4 +192,8 @@ export class UsersController {
   deleteUser(@Param('id') id: string): Promise<Omit<Users, 'password'>> {
     return this.usersService.deleteUser(id);
   }
+  //* 4 paso borrado Logico (reemplazar delete)
+  //   deleteUser(@Param('id', ParseUUIDPipe) id: string) {
+  //     return this.usersService.deleteUser(id);
+  // }
 }

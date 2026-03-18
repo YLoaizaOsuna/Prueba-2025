@@ -75,6 +75,30 @@ export class Users {
   })
   isAdmin: boolean;
 
+  //* Crear Superadmin (2 paso)
+  @ApiHideProperty()
+  @Column({
+    default: false,
+  })
+  isSuperAdmin: boolean;
+
+  //* Borrado logico (soft delete 1 paso)
+  @Column({
+    default: true,
+  })
+  isActive!: boolean;
+
+  //* Agregar un nuevo campo en users (birthday) 1 paso
+  @Column({
+    type: 'date',
+    nullable: true,
+  })
+  birthday?: Date;
+
+  //* Agragar un nuevo campo para isBlocked(1 paso)
+  @Column({ default: false })
+  isBlocked: boolean;
+
   @ApiProperty({
     description: 'Ordenes asociadas al usuario',
     type: () => Orders,

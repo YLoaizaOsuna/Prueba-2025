@@ -1,7 +1,13 @@
-import { Controller, Get } from '@nestjs/common';
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+import { Controller, Get, Param } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { Categories } from './entities/categories.entity';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
 
 @ApiTags('Categories')
 @Controller('categories')
@@ -32,5 +38,23 @@ export class CategoriesController {
   })
   getCategories() {
     return this.categoriesService.getCategories();
+  }
+
+  //*##3. GET /category/:id (paso 1)
+  @Get(':id')
+  @ApiOperation({
+    summary: 'Obtener una categoria por id',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'ID de la categoria',
+    example: '05a0850e-64e5-4a2b-a93a-3153fe7d1c4f',
+  })
+  @ApiOkResponse({
+    description: 'Categoria encontrada',
+    type: Categories,
+  })
+  getCategoryById(@Param('id') id: string) {
+    return this.categoriesService.getCategoryById(id);
   }
 }
